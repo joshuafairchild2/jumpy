@@ -1,6 +1,9 @@
 let GameState = {
 
   init: function() {
+    this.cursors = this.game.input.keyboard.createCursorKeys();
+
+    this.HORIZONTAL_SPEED = 200;
   },
 
   preload: function() {
@@ -22,14 +25,22 @@ let GameState = {
 
     this.paddle = this.add.sprite(200,400,'paddle');
     this.game.physics.arcade.enable(this.paddle);
-    this.paddle.scale.x = 1.5;
+    this.paddle.scale.setTo(1.5);
     this.paddle.anchor.setTo(0.5);
     this.paddle.body.allowGravity = false;
     this.paddle.body.immovable = true;
+    this.paddle.body.checkCollision.down = false;
   },
 
   update: function() {
     this.game.physics.arcade.collide(this.ball, this.paddle);
+
+    if (this.cursors.left.isDown) {
+      this.ball.body.velocity.x = -this.HORIZONTAL_SPEED;
+    }
+    else if (this.cursors.right.isDown) {
+      this.ball.body.velocity.x = this.HORIZONTAL_SPEED;
+    }
   }
 };
 
