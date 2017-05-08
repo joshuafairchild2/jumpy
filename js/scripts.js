@@ -15,37 +15,29 @@ let GameState = {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.arcade.gravity.y = 1000;
     this.stage.backgroundColor = 'black';
+    this.world.resize(375,6000)
 
 
-    this.ball = this.add.sprite(200, 300,'ball');
+    this.ball = this.add.sprite(30, 5700,'ball');
     this.game.physics.arcade.enable(this.ball);
     this.ball.scale.setTo(0.75);
     this.ball.anchor.setTo(0.5);
-    this.ball.body.bounce.y = 1.01;
     this.ball.body.collideWorldBounds = true;
+    this.camera.follow(this.ball);
 
 
-    this.paddles = this.add.group();
-    this.paddles.create(200,300,'paddle');
-    this.paddles.create(200,400,'paddle');
-    this.paddles.create(200,500,'paddle');
-    this.paddles.create(200,650,'paddle');
-    
-    this.game.physics.arcade.enable(this.paddles);
-    this.paddles.children.forEach(function(paddle) {
-      paddle.scale.setTo(1.5);
-      paddle.anchor.setTo(0.5);
-    });
-
-    this.paddles.setAll('body.immovable', true);
-    this.paddles.setAll('body.allowGravity', false);
-    this.paddles.setAll('body.checkCollision.down', false);
-    this.paddles.setAll('body.checkCollision.right', false);
-    this.paddles.setAll('body.checkCollision.left', false);
+    this.paddles = this.game.add.group();
+    this.paddles.enableBody = true;
+    this.paddles.createMultiple(30,'paddle');
+    this.addPaddle(200,5600);
+    this.addPaddle(125,5750);
+    this.addPaddle(330,5800);
+    this.addPaddle(50,5900);
   },
 
+
   update: function() {
-    this.game.physics.arcade.collide(this.ball, this.paddles);
+    this.game.physics.arcade.collide(this.ball, this.paddles, this.bounce);
 
     if (this.cursors.left.isDown) {
       this.ball.body.velocity.x = -this.HORIZONTAL_SPEED;
@@ -53,6 +45,26 @@ let GameState = {
     else if (this.cursors.right.isDown) {
       this.ball.body.velocity.x = this.HORIZONTAL_SPEED;
     }
+
+  },
+
+  addPaddle: function(x,y) {
+    let paddle = this.paddles.getFirstDead();
+
+    paddle.reset(x,y);
+    paddle.checkWorldBounds = true;
+    paddle.outOfBoundsKill = true;
+    paddle.scale.setTo(1.5);
+    paddle.anchor.setTo(0.5);
+    paddle.body.immovable = true;
+    paddle.body.allowGravity = false;
+    paddle.body.checkCollision.down = false;
+    paddle.body.checkCollision.left = false;
+    paddle.body.checkCollision.right = false;
+  },
+
+  bounce: function(ball,paddles) {
+    ball.body.velocity.y = -600;
   }
 };
 
