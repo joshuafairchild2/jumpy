@@ -15,10 +15,10 @@ let GameState = {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.arcade.gravity.y = 1000;
     this.stage.backgroundColor = 'black';
-    this.world.resize(400,10000)
+    this.world.resize(400,100000)
 
 
-    this.ball = this.add.sprite(this.game.width / 2, 9850,'ball');
+    this.ball = this.add.sprite(this.game.width / 2, this.world.height -150,'ball');
     this.game.physics.arcade.enable(this.ball);
     this.ball.scale.setTo(0.75);
     this.ball.anchor.setTo(0.5);
@@ -30,9 +30,9 @@ let GameState = {
     this.paddles.enableBody = true;
     this.paddles.createMultiple(30,'paddle');
 
-    this.addPaddle((this.game.width / 2),9900);
+    this.addPaddle((this.game.width / 2),this.world.height - 100);
 
-    for (let i = 98; i > 1; i--) {
+    for (let i = 998; i > 1; i--) {
       this.randXCoord = this.randInt(45,355);
       this.addPaddle(this.randXCoord,(i*100));
     }
@@ -48,15 +48,14 @@ let GameState = {
       this.ball.body.velocity.x = this.HORIZONTAL_SPEED;
     }
 
+    if (this.ball.y > this.world.height - 20) {
+      game.state.start('GameState');
+    }
   },
 
   addPaddle: function(x,y) {
-    // let paddle = this.paddles.getFirstDead();
     let paddle = this.paddles.create(x,y,'paddle')
 
-    // paddle.reset(x,y);
-    paddle.checkWorldBounds = true;
-    paddle.outOfBoundsKill = true;
     paddle.scale.setTo(1.5);
     paddle.anchor.setTo(0.5);
     paddle.body.immovable = true;
